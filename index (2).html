@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flooring Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --border: #e2e2de;
+    --border-strong: #c8c8c2;
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-hint: #9b9b96;
+    --accent: #1a4fba;
+    --accent-light: #e8eef9;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page-wrap {
+    max-width: 740px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .logo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .logo-bar .brand {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 1rem;
+  }
+
+  .room-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .room-name-input {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    border: none;
+    background: none;
+    padding: 0;
+    width: 55%;
+    outline: none;
+    font-family: var(--font);
+  }
+
+  .room-name-input:focus {
+    border-bottom: 1.5px solid var(--accent);
+  }
+
+  .remove-btn {
+    font-size: 12px;
+    color: var(--text-hint);
+    border: 1px solid var(--border);
+    background: none;
+    border-radius: var(--radius-md);
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .remove-btn:hover {
+    color: #c0392b;
+    border-color: #c0392b;
+  }
+
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .inputs-grid { grid-template-columns: 1fr 1fr; }
+    .inputs-grid .field:last-child { grid-column: span 2; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .field label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .field input, .field select {
+    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+  }
+
+  .room-area-note {
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-top: 10px;
+  }
+
+  .add-room-btn {
+    width: 100%;
+    border: 1.5px dashed var(--border-strong);
+    background: none;
+    color: var(--text-muted);
+    border-radius: var(--radius-xl);
+    padding: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    font-family: var(--font);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .add-room-btn:hover {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 540px) {
+    .settings-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 540px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .metric {
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--text-hint);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .metric-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text-hint);
+    margin-top: 2px;
+  }
+
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .breakdown-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-hint);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 8px 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .breakdown-table th:last-child { text-align: right; }
+
+  .breakdown-table td {
+    padding: 10px 8px 10px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .breakdown-table td:last-child { text-align: right; }
+
+  .breakdown-table tr:last-child td { border-bottom: none; }
+
+  .tfoot-row td {
+    font-weight: 600;
+    font-size: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-strong);
+    border-bottom: none;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 99px;
+    display: inline-block;
+  }
+
+  .pill-carpet   { background: #e1f5ee; color: #0f6e56; }
+  .pill-vinyl    { background: #e6f1fb; color: #185fa5; }
+  .pill-laminate { background: #faeeda; color: #854f0b; }
+  .pill-hardwood { background: #faece7; color: #993c1d; }
+  .pill-tile     { background: #eeedfe; color: #534ab7; }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-top: 1rem;
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-hint);
+    font-size: 14px;
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="logo-bar">
+    <span class="brand">Digital Marketing Scotland</span>
+  </div>
+
+  <div class="page-header">
+    <h1>Flooring Calculator</h1>
+    <p>Add your rooms, choose your flooring, and get an instant material and cost estimate.</p>
+  </div>
+
+  <p class="section-label">Rooms</p>
+  <div id="rooms-container"></div>
+  <button class="add-room-btn" onclick="addRoom()">+ add another room</button>
+
+  <div class="card">
+    <p class="section-label">Flooring settings</p>
+    <div class="settings-grid">
+      <div class="field">
+        <label>Flooring type</label>
+        <select id="flooring-type" onchange="calc()">
+          <option value="carpet">Carpet</option>
+          <option value="vinyl">Luxury vinyl (LVT)</option>
+          <option value="laminate">Laminate</option>
+          <option value="hardwood">Hardwood</option>
+          <option value="tile">Ceramic tile</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Price per m² (£)</label>
+        <input type="number" id="price-per-m2" value="25" min="1" step="0.5" oninput="calc()" />
+      </div>
+      <div class="field">
+        <label>Wastage</label>
+        <select id="wastage" onchange="calc()">
+          <option value="5">5% — simple rectangular</option>
+          <option value="10" selected>10% — typical</option>
+          <option value="15">15% — complex / diagonal</option>
+          <option value="20">20% — heavy pattern match</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-label">Summary</p>
+    <div class="summary-grid">
+      <div class="metric">
+        <div class="metric-label">Net area</div>
+        <div class="metric-value" id="s-net">0 m²</div>
+        <div class="metric-sub">room total</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Order quantity</div>
+        <div class="metric-value" id="s-gross">0 m²</div>
+        <div class="metric-sub">inc. wastage</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Material cost</div>
+        <div class="metric-value" id="s-mat">£0</div>
+        <div class="metric-sub">supply only</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Est. installed</div>
+        <div class="metric-value" id="s-total">£0</div>
+        <div class="metric-sub">inc. fitting</div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <p class="section-label">Room breakdown</p>
+    <div id="breakdown-wrap">
+      <div class="empty-state">Add a room above to see the breakdown.</div>
+    </div>
+
+    <p class="note">Fitting rates used: carpet £4/m², LVT £6/m², laminate £5/m², hardwood £9/m², tile £12/m². These are typical UK averages — adjust the price per m² to reflect your own supply costs.</p>
+  </div>
+
+  <div class="footer">Built by Digital Marketing Scotland</div>
+
+</div>
+
+<script>
+const FITTING  = { carpet: 4, vinyl: 6, laminate: 5, hardwood: 9, tile: 12 };
+const PILL_CLS = { carpet: 'pill-carpet', vinyl: 'pill-vinyl', laminate: 'pill-laminate', hardwood: 'pill-hardwood', tile: 'pill-tile' };
+const TYPE_LBL = { carpet: 'Carpet', vinyl: 'LVT', laminate: 'Laminate', hardwood: 'Hardwood', tile: 'Tile' };
+const DEF_NAMES = ['Living room','Bedroom 1','Bedroom 2','Hallway','Dining room','Study','Master bedroom','Landing','Bathroom','Kitchen'];
+
+let roomCount = 0;
+
+function addRoom() {
+  const id = ++roomCount;
+  const name = DEF_NAMES[id - 1] || ('Room ' + id);
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.id = 'room-' + id;
+  div.innerHTML = `
+    <div class="room-header">
+      <input class="room-name-input" id="rname-${id}" value="${name}" oninput="calc()" />
+      <button class="remove-btn" onclick="removeRoom(${id})">remove</button>
+    </div>
+    <div class="inputs-grid">
+      <div class="field">
+        <label>Length (m)</label>
+        <input type="number" id="rl-${id}" value="4.0" min="0.1" step="0.1" oninput="calc()" />
+      </div>
+      <div class="field">
+        <label>Width (m)</label>
+        <input type="number" id="rw-${id}" value="3.5" min="0.1" step="0.1" oninput="calc()" />
+      </div>
+      <div class="field">
+        <label>Shape</label>
+        <select id="rs-${id}" onchange="calc()">
+          <option value="1">Rectangular</option>
+          <option value="0.85">L-shaped (est.)</option>
+          <option value="0.7">Irregular</option>
+        </select>
+      </div>
+    </div>
+    <p class="room-area-note" id="rarea-${id}">Area: 14.0 m²</p>
+  `;
+  document.getElementById('rooms-container').appendChild(div);
+  calc();
+}
+
+function removeRoom(id) {
+  const el = document.getElementById('room-' + id);
+  if (el) el.remove();
+  calc();
+}
+
+function calc() {
+  const type   = document.getElementById('flooring-type').value;
+  const ppm2   = parseFloat(document.getElementById('price-per-m2').value) || 0;
+  const wastage = parseFloat(document.getElementById('wastage').value) / 100;
+  const fitting = FITTING[type] || 0;
+
+  let totalNet = 0, totalGross = 0, totalCost = 0;
+  const rows = [];
+
+  for (let i = 1; i <= roomCount; i++) {
+    const el = document.getElementById('room-' + i);
+    if (!el) continue;
+    const l    = parseFloat(document.getElementById('rl-' + i).value) || 0;
+    const w    = parseFloat(document.getElementById('rw-' + i).value) || 0;
+    const s    = parseFloat(document.getElementById('rs-' + i).value) || 1;
+    const name = document.getElementById('rname-' + i).value || ('Room ' + i);
+    const net  = Math.round(l * w * s * 100) / 100;
+    const gross = Math.round(net * (1 + wastage) * 100) / 100;
+    const cost  = Math.round((gross * ppm2 + net * fitting) * 100) / 100;
+    document.getElementById('rarea-' + i).textContent = 'Area: ' + net.toFixed(1) + ' m²';
+    totalNet += net; totalGross += gross; totalCost += cost;
+    rows.push({ name, net, gross, cost });
+  }
+
+  document.getElementById('s-net').textContent   = totalNet.toFixed(1) + ' m²';
+  document.getElementById('s-gross').textContent = totalGross.toFixed(1) + ' m²';
+  document.getElementById('s-mat').textContent   = '£' + Math.round(totalGross * ppm2).toLocaleString('en-GB');
+  document.getElementById('s-total').textContent = '£' + Math.round(totalCost).toLocaleString('en-GB');
+
+  const wrap = document.getElementById('breakdown-wrap');
+
+  if (rows.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">Add a room above to see the breakdown.</div>';
+    return;
+  }
+
+  const pillCls = PILL_CLS[type];
+  const typeLbl = TYPE_LBL[type];
+
+  const bodyRows = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td><span class="pill ${pillCls}">${typeLbl}</span></td>
+      <td>${r.net.toFixed(1)} m²</td>
+      <td>${r.gross.toFixed(1)} m²</td>
+      <td>£${Math.round(r.cost).toLocaleString('en-GB')}</td>
+    </tr>
+  `).join('');
+
+  wrap.innerHTML = `
+    <table class="breakdown-table">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Type</th>
+          <th>Net area</th>
+          <th>To order</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>${bodyRows}</tbody>
+      <tfoot>
+        <tr class="tfoot-row">
+          <td colspan="2">Total</td>
+          <td>${totalNet.toFixed(1)} m²</td>
+          <td>${totalGross.toFixed(1)} m²</td>
+          <td>£${Math.round(totalCost).toLocaleString('en-GB')}</td>
+        </tr>
+      </tfoot>
+    </table>
+  `;
+}
+
+addRoom();
+</script>
+</body>
+</html>
